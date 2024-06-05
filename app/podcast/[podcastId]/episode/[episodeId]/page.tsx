@@ -88,7 +88,6 @@ const EpisodePage = ({ params }: Props) => {
                     <p className="text-xl font-bold">
                         {episodeData?.trackName}
                     </p>
-                    <p className="mt-4 whitespace-pre-line"></p>
                     <div
                         className="whitespace-pre-line"
                         dangerouslySetInnerHTML={{

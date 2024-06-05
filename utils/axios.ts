@@ -23,7 +23,6 @@ export const customAxios = async ({
             params,
             data,
         };
-
         const response = await axios(config);
         const { status, data: responseData } = response;
         if (status >= 400 && status < 600) {

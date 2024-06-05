@@ -5,6 +5,13 @@ import PodcastListCard from "@/components/podcastListCard";
 import { Podcast } from "@/models/Podcast";
 import { useAppDispatch } from "@/redux/reducHooks";
 import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
+import PodcastSkeleton from "./podcast/components/podcastSkeleton";
+import { Metadata } from "next";
+
+const metadata: Metadata = {
+    title: "Podcasts - List",
+    description: "List of podcasts from iTunes API",
+};
 
 const HomePage = () => {
     const {
@@ -21,7 +28,10 @@ const HomePage = () => {
         if (isLoading && !podcasts) {
             dispatch(setDataIsLoading(true));
         } else {
-            dispatch(setDataIsLoading(false));
+            if (podcasts) {
+                dispatch(setDataIsLoading(false));
+                setFilteredPodcasts(podcasts);
+            }
         }
     }, [isLoading]);
 
@@ -41,8 +51,16 @@ const HomePage = () => {
         }
     }, [filter]);
 
-    if (isLoading) return <p>Loading...</p>;
-    if (isError) return <p>Error loading podcasts</p>;
+    if (isLoading)
+        return (
+            <PodcastSkeleton typeOfSkeleton="podcastList" />
+        );
+    if (isError)
+        return (
+            <div className="flex w-full h-full justify-center items-center">
+                Error loading podcasts list
+            </div>
+        );
 
     return (
         <div className="flex flex-col w-full justify-start items-center">
@@ -60,7 +78,7 @@ const HomePage = () => {
                     }
                 />
             </div>
-            <div className="flex w-full mt-16 gap-8 flex-wrap justify-center">
+            <div className="flex w-full mt-16 gap-8 flex-wrap justify-center mb-16">
                 {filteredPodcasts.map(
                     (podcast: Podcast) => (
                         <PodcastListCard

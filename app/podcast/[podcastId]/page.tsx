@@ -9,7 +9,7 @@ import { Podcast } from "@/models/Podcast";
 import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
 import { useAppDispatch } from "@/redux/reducHooks";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import PodcastSkeleton from "../components/podcastSkeleton";
 
 interface Props {
@@ -126,6 +126,11 @@ const PodcastPage = ({ params }: Props) => {
                                             <td
                                                 className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 hover:cursor-pointer"
                                                 onClick={() => {
+                                                    dispatch(
+                                                        setDataIsLoading(
+                                                            true
+                                                        )
+                                                    );
                                                     router.push(
                                                         `/podcast/${podcastId}/episode/${episode.trackId}`
                                                     );

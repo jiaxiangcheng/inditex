@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Podcasts",
-    description: "Listen to your favorite podcasts",
+    description: "List of podcasts from iTunes API",
 };
 
 export default function RootLayout({

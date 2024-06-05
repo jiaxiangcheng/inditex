@@ -1,4 +1,6 @@
 import { Podcast } from "@/models/Podcast";
+import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
+import { useAppDispatch } from "@/redux/reducHooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -9,7 +11,9 @@ interface Props {
 
 const PodcastListCard = ({ podcast }: Props) => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const cardClicked = () => {
+        dispatch(setDataIsLoading(true));
         router.push(
             `/podcast/${podcast.id.attributes["im:id"]}`
         );

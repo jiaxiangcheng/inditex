@@ -1,36 +1,7 @@
 "use client";
 
 import { useQuery } from "react-query";
-import { customAxios } from "@/utils/axios";
-
-const fetchPodcasts = async () => {
-    const response = await customAxios({
-        url: `https://api.allorigins.win/get?url=${encodeURIComponent('https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json')}`,
-        method: "GET",
-    });
-    console.log("response", response);
-    if (!response.feed.entry) {
-        console.error("Error fetching podcasts", response);
-        return [];
-    } else {
-        return response.feed.entry;
-    }
-};
-
-const fetchPodcastsById = async (id: string) => {
-    const url = `https://itunes.apple.com/lookup?id=${id}&media=podcast&entity=podcastEpisode&limit=20`
-    const response = await customAxios({
-        url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-        method: "GET",
-    });
-    console.log("response", response);
-    if (!response.results) {
-        console.error("Error fetching podcasts", response);
-        return [];
-    } else {
-        return response;
-    }
-};
+import { fetchPodcasts, fetchPodcastsById } from "./helpers/apiCalls";
 
 const usePersistedQuery = (
     key: string,
@@ -45,13 +16,12 @@ const usePersistedQuery = (
                 // check if the data is expired
                 const data = JSON.parse(cachedData);
                 if (data.expiration > Date.now()) {
-                    console.log("cached data", data);
+                    console.log("using cached data", data);
                     return data.data;
                 } else {
                     localStorage.removeItem(key);
                 }
             }
-            console.log("fetching data");
             const data = await queryFn();
             // set an attribute to indicates the date of expiration
             const newData = {
