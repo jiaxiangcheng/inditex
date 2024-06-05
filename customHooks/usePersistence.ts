@@ -44,16 +44,23 @@ const usePersistedQuery = (
                 // check if the data is expired
                 const data = JSON.parse(cachedData);
                 if (data.expiration > Date.now()) {
-                    return data;
+                    console.log("cached data", data);
+                    return data.data;
                 } else {
                     localStorage.removeItem(key);
                 }
             }
+            console.log("fetching data");
             const data = await queryFn();
             // set an attribute to indicates the date of expiration
-            data.expiration =
-                Date.now() + options.staleTime;
-            localStorage.setItem(key, JSON.stringify(data));
+            const newData = {
+                data,
+                expiration: Date.now() + options.staleTime,
+            };
+            localStorage.setItem(
+                key,
+                JSON.stringify(newData)
+            );
             return data;
         },
         options

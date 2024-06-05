@@ -3,4 +3,11 @@
 @tailwind utilities;
 
 :root {
+    .productListCardImage {
+        width: 100px !important;
+        height: 100px !important;
+        border-radius: 100% !important;
+        object-fit: cover !important;
+        border: 3px solid black !important;
+    }
 }

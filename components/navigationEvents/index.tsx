@@ -20,7 +20,6 @@ export function NavigationEvents({
 
     useEffect(() => {
         const url = `${pathname}?${searchParams}`;
-        console.log("current url", url);
         setRouterChanging(false);
     }, [pathname, searchParams]);
 
