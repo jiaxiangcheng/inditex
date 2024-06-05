@@ -8,7 +8,7 @@ interface Props {
 
 const PodcastDetailCard = ({ podcast }: Props) => {
     return (
-        <div className="podcastDetailCard flex flex-col w-[30%] h-fit p-4 shadow-lg mt-4 rounded-md">
+        <div className="podcastDetailCard flex flex-col w-[20%] h-fit p-4 shadow-lg mt-4 rounded-md">
             <div className="divide-y divide-gray-300/50 ">
                 <div className="flex justify-center items-center rounded-md">
                     <Image
@@ -27,9 +27,9 @@ const PodcastDetailCard = ({ podcast }: Props) => {
                         by {podcast["im:name"].label}
                     </p>
                 </div>
-                <div className="py-4">
+                <div className="py-4 overflow-hidden">
                     <p className="font-bold">Description</p>
-                    <p className="italic">
+                    <p className="italic text-ellipsis whitespace-pre-line">
                         {podcast.summary.label}
                     </p>
                 </div>

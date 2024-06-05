@@ -67,7 +67,19 @@ const EpisodePage = ({ params }: Props) => {
                 <PodcastDetailCard podcast={podcastData} />
             )}
             <div className="episodesContainer flex flex-col flex-1 ml-16 mt-4">
-                <div className="episodePreview p-4 shadow-lg rounded-md"></div>
+                <div className="episodePreview p-8 shadow-lg rounded-md">
+                    <p className="text-xl font-bold">
+                        {episodeData?.trackName}
+                    </p>
+                    <p className="mt-4 whitespace-pre-line">
+                        {episodeData?.description}
+                    </p>
+                    <audio
+                        className="mt-8 w-full"
+                        controls
+                        src={episodeData?.previewUrl}
+                    />
+                </div>
             </div>
         </div>
     );

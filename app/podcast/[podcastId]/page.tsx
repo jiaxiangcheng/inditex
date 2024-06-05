@@ -4,10 +4,10 @@ import {
     usePodcastById,
     usePodcasts,
 } from "@/customHooks/usePersistence";
+import { Episode } from "@/models/Episode";
 import { Podcast } from "@/models/Podcast";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface Props {
     params: {
@@ -16,22 +16,31 @@ interface Props {
 }
 
 const PodcastPage = ({ params }: Props) => {
+    const podcastId = params.podcastId;
     const {
         data: podcasts,
         isLoading: podcastsLoading,
         isError: podcastsError,
     } = usePodcasts();
-    const podcastId = params.podcastId;
     const {
         data: podcastDetails,
         isLoading,
         isError,
     } = usePodcastById(podcastId);
     const router = useRouter();
-    const podcastData: Podcast = podcasts.find(
-        (podcast: Podcast) =>
-            podcast.id.attributes["im:id"] === podcastId
-    );
+    const [podcastData, setPodcastData] =
+        React.useState<Podcast | null>(null);
+
+    useEffect(() => {
+        if (podcasts) {
+            const podcast = podcasts.find(
+                (podcast: Podcast) =>
+                    podcast.id.attributes["im:id"] ===
+                    podcastId
+            );
+            setPodcastData(podcast);
+        }
+    }, [podcasts]);
 
     if (isLoading || podcastsLoading)
         return <p>Loading...</p>;
@@ -39,23 +48,19 @@ const PodcastPage = ({ params }: Props) => {
         return (
             <p>{`Error loading podcasts with id: ${podcastId}`}</p>
         );
-
-    console.log(
-        "🚀 ~ PodcastPage ~ podcastData:",
-        podcastData
-    );
-    console.log("podcastDetails", podcastDetails);
     return (
         <div className="flex w-full p-8">
-            <PodcastDetailCard podcast={podcastData} />
+            {podcastData && (
+                <PodcastDetailCard podcast={podcastData} />
+            )}
             <div className="episodesContainer flex flex-col flex-1 ml-16 mt-4">
-                <div className="episodeTitle p-4 shadow-lg rounded-md">
+                <div className="episodeTitle p-8 shadow-lg rounded-md">
                     <h1 className="w-full font-bold text-2xl">
                         Episodes:{" "}
                         {podcastDetails.resultCount}
                     </h1>
                 </div>
-                <div className="episodeList p-4 shadow-lg rounded-md mt-4">
+                <div className="episodeList p-8 shadow-lg rounded-md mt-4">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
@@ -81,7 +86,12 @@ const PodcastPage = ({ params }: Props) => {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {podcastDetails.results.map(
-                                (episode: any) => {
+                                (
+                                    episode: Episode,
+                                    index: number
+                                ) => {
+                                    if (index === 0)
+                                        return null;
                                     // Convert episode.trackTimeMillis to MM:SS
                                     const duration =
                                         new Date(
@@ -91,7 +101,9 @@ const PodcastPage = ({ params }: Props) => {
                                             .substr(14, 5);
                                     return (
                                         <tr
-                                            key={episode.id}
+                                            key={
+                                                episode.trackId
+                                            }
                                             className="hover:bg-gray-100"
                                         >
                                             <td
