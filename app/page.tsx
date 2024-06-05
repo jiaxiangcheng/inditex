@@ -1,6 +1,6 @@
 "use client";
 import { usePodcasts } from "../customHooks/usePersistence";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import PodcastListCard from "@/components/podcastListCard";
 import { Podcast } from "@/models/Podcast";
 import { useAppDispatch } from "@/redux/reducHooks";
@@ -13,17 +13,10 @@ const HomePage = () => {
         isError,
     } = usePodcasts();
     const [filter, setFilter] = useState("");
+    const [filteredPodcasts, setFilteredPodcasts] =
+        useState<Podcast[]>([]);
     const dispatch = useAppDispatch();
 
-    const filteredPodcasts = podcasts.filter(
-        (podcast: any) =>
-            podcast.title.label
-                .toLowerCase()
-                .includes(filter.toLowerCase()) ||
-            podcast["im:artist"].label
-                .toLowerCase()
-                .includes(filter.toLowerCase())
-    );
     useEffect(() => {
         if (isLoading && !podcasts) {
             dispatch(setDataIsLoading(true));
@@ -31,6 +24,22 @@ const HomePage = () => {
             dispatch(setDataIsLoading(false));
         }
     }, [isLoading]);
+
+    useEffect(() => {
+        if (podcasts) {
+            if (filter != "") {
+                const filteredPodcasts = podcasts.filter(
+                    (podcast: Podcast) =>
+                        podcast["im:name"].label
+                            .toLowerCase()
+                            .includes(filter.toLowerCase())
+                );
+                setFilteredPodcasts(filteredPodcasts);
+            } else {
+                setFilteredPodcasts(podcasts);
+            }
+        }
+    }, [filter]);
 
     if (isLoading) return <p>Loading...</p>;
     if (isError) return <p>Error loading podcasts</p>;
