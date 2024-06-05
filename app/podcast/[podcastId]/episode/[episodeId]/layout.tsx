@@ -1,4 +1,4 @@
-import { fetchPodcastsById } from "@/customHooks/helpers/apiCalls";
+import { fetchPodcastsById } from "@/hooks/helpers/apiCalls";
 import { Episode } from "@/models/Episode";
 import type { Metadata, ResolvingMetadata } from "next";
 
@@ -54,7 +54,7 @@ export async function generateMetadata(
     };
 }
 */
-export default function RootLayout({
+export default function EpisodeRootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

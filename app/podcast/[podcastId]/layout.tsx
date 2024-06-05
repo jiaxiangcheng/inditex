@@ -1,4 +1,4 @@
-import { fetchPodcastsById } from "@/customHooks/helpers/apiCalls";
+import { fetchPodcastsById } from "@/hooks/helpers/apiCalls";
 import { Episode } from "@/models/Episode";
 import type { Metadata, ResolvingMetadata } from "next";
 
@@ -10,7 +10,8 @@ interface MetadataProps {
 }
 
 // Uncomment the following code to enable metadata generation
-// Which means: Server Side Rendering (SSR) -> Better SEO -> Lower LCP
+// Which means: Better SEO -> Lower LCP -> Higher First Contentful Paint
+
 /*
 export async function generateMetadata(
     { params, searchParams }: MetadataProps,
@@ -48,7 +49,7 @@ export async function generateMetadata(
     };
 }
 */
-export default function RootLayout({
+export default function PodcastRootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

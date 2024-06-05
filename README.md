@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Podcast Mini-Application
 
-## Getting Started
+This project is a mini-application for listening to musical podcasts, built as a Single Page Application (SPA) using the latest versions of React and Next.js.
 
-First, run the development server:
+## Notes
+
+-   **Next.js v14** requires **Node v18+**.
+-   Replace 'npm' with your package manager if you are using a different one.
+
+## Development Setup
+
+### Run in Development Mode
 
 ```bash
+npm i
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Run in Production Mode in your server
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+### Optional Feature: Improving SEO
 
-To learn more about Next.js, take a look at the following resources:
+To improve the SEO of the Podcast and Episode pages, uncomment the commented code in the corresponding `layout.tsx` files. This action will enhance the first contentful paint since there is SSR.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technology Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### React + Next.js
 
-## Deploy on Vercel
+-   **Reason**:
+    -   **React**: Chosen for its component-based architecture, allowing for reusable UI components.
+    -   **Next.js**: Provides out-of-the-box optimizations such as automatic code splitting, optimized Image components, and an easy-to-use routing system via the new App Router. These features enhance performance and developer experience, especially when building SPAs.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### TailwindCSS
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+-   **Reason**:
+    -   **Utility-First CSS**: TailwindCSS allows for rapid styling directly in the component files, leading to a more streamlined and maintainable codebase. Its utility-first approach reduces the need for custom CSS, speeding up development and ensuring consistent styling across the application.
+
+### Redux (Toolkit)
+
+-   **Reason**:
+    -   **State Management**: Redux Toolkit simplifies state management with its easy configuration and best practices. It is particularly beneficial in managing global states.
+
+### LocalStorage + React Query
+
+-   **Reason**:
+    -   **Data Caching**: LocalStorage is used to persist data between sessions, reducing unnecessary API calls. React Query enhances this by caching request results while the user remains on the page, ensuring fast data retrieval and a smooth user experience even without page reloads.
+
+## Why These Choices?
+
+-   **React and Next.js**: By leveraging React and Next.js, the application benefits from a modern, optimized build setup, server-side rendering capabilities, and a seamless development workflow.
+-   **TailwindCSS**: Provides a highly efficient styling mechanism that keeps the codebase clean and maintainable.
+-   **Redux Toolkit**: Ensures a scalable and maintainable state management solution.
+-   **LocalStorage and React Query**: Combines persistent and in-memory caching strategies to optimize data fetching and reduce load times.

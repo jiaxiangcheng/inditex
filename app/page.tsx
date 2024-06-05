@@ -1,5 +1,5 @@
 "use client";
-import { usePodcasts } from "../customHooks/usePersistence";
+import { usePodcasts } from "../hooks/usePersistence";
 import {
     useEffect,
     useMemo,

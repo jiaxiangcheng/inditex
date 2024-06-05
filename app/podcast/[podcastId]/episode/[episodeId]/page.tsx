@@ -4,7 +4,7 @@ import PodcastDetailCard from "@/components/podcastDetailCard";
 import {
     usePodcastById,
     usePodcasts,
-} from "@/customHooks/usePersistence";
+} from "@/hooks/usePersistence";
 import { Episode } from "@/models/Episode";
 import { Podcast } from "@/models/Podcast";
 import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
