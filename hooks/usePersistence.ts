@@ -30,12 +30,13 @@ const usePersistedQuery = (
                         localStorage.removeItem(key);
                     }
                 }
+                // fetch the data if it's not cached
                 const data = await queryFn();
                 // set an attribute to indicates the date of expiration
                 const newData = {
                     data,
                     expiration:
-                        Date.now() + options.staleTime,
+                        Date.now() + 86400000,
                 };
                 localStorage.setItem(
                     key,
@@ -54,21 +55,37 @@ const usePersistedQuery = (
     );
 };
 
+const getCachedData = (key: string) => {
+    const cachedData = localStorage.getItem(key);
+    let staleTime = 86400000; // default to 24 hours
+    let cacheTime = 86400000; // default to 24 hours
+
+    if (cachedData) {
+        const data = JSON.parse(cachedData);
+        const expiration = data.expiration;
+        const timeLeft = expiration - Date.now();
+        staleTime = timeLeft > 0 ? timeLeft : 0;
+        cacheTime = timeLeft > 0 ? timeLeft : 0;
+    }
+
+    return { staleTime, cacheTime };
+};
+
 export const usePodcasts = () => {
-    // set the staleTime and cacheTime to 1 day
-    return usePersistedQuery("podcasts", fetchPodcasts, {
-        staleTime: 86400000,
-        cacheTime: 86400000,
+    const key = "podcasts";
+    const { staleTime, cacheTime } = getCachedData(key);
+    return usePersistedQuery(key, fetchPodcasts, {
+        staleTime: staleTime,
+        cacheTime: cacheTime,
     });
 };
 
 export const usePodcastById = (id: string) => {
-    return usePersistedQuery(
-        `podcast-${id}`,
-        () => fetchPodcastsById(id),
-        {
-            staleTime: 86400000,
-            cacheTime: 86400000,
-        }
-    );
+    const key = `podcast-${id}`;
+    const { staleTime, cacheTime } = getCachedData(key);
+    return usePersistedQuery(key, () => fetchPodcastsById(id), {
+        staleTime: staleTime,
+        cacheTime: cacheTime,
+    });
 };
+
