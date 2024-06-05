@@ -26,7 +26,6 @@ export const customAxios = async ({
 
         const response = await axios(config);
         const { status, data: responseData } = response;
-
         if (status >= 400 && status < 600) {
             console.log(
                 `Error fetching ${url} with data`,
@@ -34,7 +33,7 @@ export const customAxios = async ({
             );
             return [];
         } else {
-            return responseData;
+            return JSON.parse(responseData.contents);
         }
     } catch (error) {
         console.log(

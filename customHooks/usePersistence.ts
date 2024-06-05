@@ -5,7 +5,7 @@ import { customAxios } from "@/utils/axios";
 
 const fetchPodcasts = async () => {
     const response = await customAxios({
-        url: "https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json",
+        url: `https://api.allorigins.win/get?url=${encodeURIComponent('https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json')}`,
         method: "GET",
     });
     console.log("response", response);
@@ -18,8 +18,9 @@ const fetchPodcasts = async () => {
 };
 
 const fetchPodcastsById = async (id: string) => {
+    const url = `https://itunes.apple.com/lookup?id=${id}&media=podcast&entity=podcastEpisode&limit=20`
     const response = await customAxios({
-        url: `https://itunes.apple.com/lookup?id=${id}&media=podcast&entity=podcastEpisode&limit=20`,
+        url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
         method: "GET",
     });
     console.log("response", response);
@@ -27,7 +28,7 @@ const fetchPodcastsById = async (id: string) => {
         console.error("Error fetching podcasts", response);
         return [];
     } else {
-        return response.results;
+        return response;
     }
 };
 

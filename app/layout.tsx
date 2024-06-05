@@ -20,14 +20,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <div className="divide-y divide-gray-300/50 ">
-                    <StoreProvider>
-                        <QueryProvider>
-                            <NavBar />
-                            {children}
-                        </QueryProvider>
-                    </StoreProvider>
-                </div>
+                <StoreProvider>
+                    <QueryProvider>
+                        <NavBar />
+                        {children}
+                    </QueryProvider>
+                </StoreProvider>
             </body>
         </html>
     );
