@@ -9,7 +9,11 @@ import { Podcast } from "@/models/Podcast";
 import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
 import { useAppDispatch } from "@/redux/reducHooks";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, {
+    useEffect,
+    useMemo,
+    useCallback,
+} from "react";
 import PodcastSkeleton from "../components/podcastSkeleton";
 
 interface Props {
@@ -32,19 +36,19 @@ const PodcastPage = ({ params }: Props) => {
     } = usePodcastById(podcastId);
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const [podcastData, setPodcastData] =
-        React.useState<Podcast | null>(null);
 
-    useEffect(() => {
+    const podcastData = useMemo(() => {
         if (podcasts) {
-            const podcast = podcasts.find(
-                (podcast: Podcast) =>
-                    podcast.id.attributes["im:id"] ===
-                    podcastId
+            return (
+                podcasts.find(
+                    (podcast: Podcast) =>
+                        podcast.id.attributes["im:id"] ===
+                        podcastId
+                ) || null
             );
-            setPodcastData(podcast);
         }
-    }, [podcasts]);
+        return null;
+    }, [podcasts, podcastId]);
 
     useEffect(() => {
         if (isLoading && !podcastDetails) {
@@ -52,14 +56,30 @@ const PodcastPage = ({ params }: Props) => {
         } else {
             dispatch(setDataIsLoading(false));
         }
-    }, [isLoading]);
+    }, [isLoading, podcastDetails, dispatch]);
 
-    if (isLoading || podcastsLoading)
+    const handleEpisodeClick = useCallback(
+        (episodeId: number) => {
+            dispatch(setDataIsLoading(true));
+            router.push(
+                `/podcast/${podcastId}/episode/${episodeId.toString()}`
+            );
+        },
+        [dispatch, router, podcastId]
+    );
+
+    if (isLoading || podcastsLoading) {
         return <PodcastSkeleton typeOfSkeleton="podcast" />;
-    if (isError || podcastsError)
+    }
+
+    if (isError || podcastsError) {
         return (
-            <div className="flex w-full h-full justify-center items-center">{`Error loading podcasts with id: ${podcastId}`}</div>
+            <div className="flex w-full h-full justify-center items-center">
+                {`Error loading podcasts with id: ${podcastId}`}
+            </div>
         );
+    }
+
     return (
         <div className="flex w-full p-8">
             {podcastData && (
@@ -104,7 +124,7 @@ const PodcastPage = ({ params }: Props) => {
                                 ) => {
                                     if (index === 0)
                                         return null;
-                                    // Convert episode.trackTimeMillis to MM:SS
+
                                     const duration =
                                         episode.trackTimeMillis
                                             ? new Date(
@@ -116,6 +136,7 @@ const PodcastPage = ({ params }: Props) => {
                                                       5
                                                   )
                                             : "N/A";
+
                                     return (
                                         <tr
                                             key={
@@ -125,16 +146,11 @@ const PodcastPage = ({ params }: Props) => {
                                         >
                                             <td
                                                 className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 hover:cursor-pointer"
-                                                onClick={() => {
-                                                    dispatch(
-                                                        setDataIsLoading(
-                                                            true
-                                                        )
-                                                    );
-                                                    router.push(
-                                                        `/podcast/${podcastId}/episode/${episode.trackId}`
-                                                    );
-                                                }}
+                                                onClick={() =>
+                                                    handleEpisodeClick(
+                                                        episode.trackId
+                                                    )
+                                                }
                                             >
                                                 {
                                                     episode.trackName

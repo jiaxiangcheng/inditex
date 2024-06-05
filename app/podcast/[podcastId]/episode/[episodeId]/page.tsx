@@ -9,7 +9,7 @@ import { Episode } from "@/models/Episode";
 import { Podcast } from "@/models/Podcast";
 import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
 import { useAppDispatch } from "@/redux/reducHooks";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 interface Props {
     params: {
@@ -32,31 +32,32 @@ const EpisodePage = ({ params }: Props) => {
         isError,
     } = usePodcastById(podcastId);
     const dispatch = useAppDispatch();
-    const [podcastData, setPodcastData] =
-        React.useState<Podcast | null>(null);
-    const [episodeData, setEpisodeData] =
-        React.useState<Episode | null>(null);
 
-    useEffect(() => {
+    const podcastData = useMemo(() => {
         if (podcasts) {
-            const podcast = podcasts.find(
-                (podcast: Podcast) =>
-                    podcast.id.attributes["im:id"] ===
-                    podcastId
+            return (
+                podcasts.find(
+                    (podcast: Podcast) =>
+                        podcast.id.attributes["im:id"] ===
+                        podcastId
+                ) || null
             );
-            setPodcastData(podcast);
         }
-    }, [podcasts]);
+        return null;
+    }, [podcasts, podcastId]);
 
-    useEffect(() => {
+    const episodeData = useMemo(() => {
         if (podcastDetails) {
-            const episode = podcastDetails.results.find(
-                (episode: Episode) =>
-                    episode.trackId.toString() === episodeId
+            return (
+                podcastDetails.results.find(
+                    (episode: Episode) =>
+                        episode.trackId.toString() ===
+                        episodeId
+                ) || null
             );
-            setEpisodeData(episode);
         }
-    }, [podcastDetails]);
+        return null;
+    }, [podcastDetails, episodeId]);
 
     useEffect(() => {
         if (
@@ -69,14 +70,25 @@ const EpisodePage = ({ params }: Props) => {
         } else {
             dispatch(setDataIsLoading(false));
         }
-    }, [isLoading]);
+    }, [
+        isLoading,
+        podcastsLoading,
+        podcastDetails,
+        episodeData,
+        dispatch,
+    ]);
 
-    if (isLoading || podcastsLoading)
+    if (isLoading || podcastsLoading) {
         return <PodcastSkeleton typeOfSkeleton="episode" />;
-    if (isError || podcastsError)
+    }
+
+    if (isError || podcastsError) {
         return (
-            <div className="flex w-full h-full justify-center items-center">{`Error loading episode with trackingId: ${episodeId}`}</div>
+            <div className="flex w-full h-full justify-center items-center">
+                {`Error loading episode with trackingId: ${episodeId}`}
+            </div>
         );
+    }
 
     return (
         <div className="flex w-full p-8">

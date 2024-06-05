@@ -10,7 +10,7 @@ interface MetadataProps {
 }
 
 // Uncomment the following code to enable metadata generation
-// Which means: Server Side Rendering (SSR) -> Better SEO -> Lower LCP
+// Which means: Better SEO -> Lower LCP -> Higher First Contentful Paint
 
 /*
 export async function generateMetadata(

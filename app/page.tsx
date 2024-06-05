@@ -1,6 +1,11 @@
 "use client";
 import { usePodcasts } from "../customHooks/usePersistence";
-import { use, useEffect, useState } from "react";
+import {
+    useEffect,
+    useMemo,
+    useState,
+    useCallback,
+} from "react";
 import PodcastListCard from "@/components/podcastListCard";
 import { Podcast } from "@/models/Podcast";
 import { useAppDispatch } from "@/redux/reducHooks";
@@ -20,9 +25,16 @@ const HomePage = () => {
         isError,
     } = usePodcasts();
     const [filter, setFilter] = useState("");
-    const [filteredPodcasts, setFilteredPodcasts] =
-        useState<Podcast[]>([]);
     const dispatch = useAppDispatch();
+    const filteredPodcasts = useMemo(() => {
+        if (!podcasts) return [];
+        if (filter === "") return podcasts;
+        return podcasts.filter((podcast: Podcast) =>
+            podcast["im:name"].label
+                .toLowerCase()
+                .includes(filter.toLowerCase())
+        );
+    }, [filter, podcasts]);
 
     useEffect(() => {
         if (isLoading && !podcasts) {
@@ -30,26 +42,13 @@ const HomePage = () => {
         } else {
             if (podcasts) {
                 dispatch(setDataIsLoading(false));
-                setFilteredPodcasts(podcasts);
             }
         }
-    }, [isLoading]);
+    }, [isLoading, podcasts, dispatch]);
 
-    useEffect(() => {
-        if (podcasts) {
-            if (filter != "") {
-                const filteredPodcasts = podcasts.filter(
-                    (podcast: Podcast) =>
-                        podcast["im:name"].label
-                            .toLowerCase()
-                            .includes(filter.toLowerCase())
-                );
-                setFilteredPodcasts(filteredPodcasts);
-            } else {
-                setFilteredPodcasts(podcasts);
-            }
-        }
-    }, [filter]);
+    const handleFilterChange = useCallback((e: any) => {
+        setFilter(e.target.value);
+    }, []);
 
     if (isLoading)
         return (
@@ -73,9 +72,7 @@ const HomePage = () => {
                     type="text"
                     placeholder="Filter podcasts..."
                     value={filter}
-                    onChange={(e) =>
-                        setFilter(e.target.value)
-                    }
+                    onChange={handleFilterChange}
                 />
             </div>
             <div className="flex w-full mt-16 gap-8 flex-wrap justify-center mb-16">
