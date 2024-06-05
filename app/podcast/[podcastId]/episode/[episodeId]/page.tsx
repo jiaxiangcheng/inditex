@@ -1,4 +1,5 @@
 "use client";
+import PodcastSkeleton from "@/app/podcast/components/podcastSkeleton";
 import PodcastDetailCard from "@/components/podcastDetailCard";
 import {
     usePodcastById,
@@ -6,6 +7,8 @@ import {
 } from "@/customHooks/usePersistence";
 import { Episode } from "@/models/Episode";
 import { Podcast } from "@/models/Podcast";
+import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
+import { useAppDispatch } from "@/redux/reducHooks";
 import React, { useEffect } from "react";
 
 interface Props {
@@ -28,6 +31,7 @@ const EpisodePage = ({ params }: Props) => {
         isLoading,
         isError,
     } = usePodcastById(podcastId);
+    const dispatch = useAppDispatch();
     const [podcastData, setPodcastData] =
         React.useState<Podcast | null>(null);
     const [episodeData, setEpisodeData] =
@@ -54,11 +58,24 @@ const EpisodePage = ({ params }: Props) => {
         }
     }, [podcastDetails]);
 
+    useEffect(() => {
+        if (
+            isLoading &&
+            podcastsLoading &&
+            !podcastDetails &&
+            !episodeData
+        ) {
+            dispatch(setDataIsLoading(true));
+        } else {
+            dispatch(setDataIsLoading(false));
+        }
+    }, [isLoading]);
+
     if (isLoading || podcastsLoading)
-        return <p>Loading...</p>;
+        return <PodcastSkeleton typeOfSkeleton="episode" />;
     if (isError || podcastsError)
         return (
-            <p>{`Error loading podcasts with id: ${podcastId}`}</p>
+            <div className="flex w-full h-full justify-center items-center">{`Error loading episode with trackingId: ${episodeId}`}</div>
         );
 
     return (
@@ -71,9 +88,13 @@ const EpisodePage = ({ params }: Props) => {
                     <p className="text-xl font-bold">
                         {episodeData?.trackName}
                     </p>
-                    <p className="mt-4 whitespace-pre-line">
-                        {episodeData?.description}
-                    </p>
+                    <p className="mt-4 whitespace-pre-line"></p>
+                    <div
+                        className="whitespace-pre-line"
+                        dangerouslySetInnerHTML={{
+                            __html: episodeData?.description!,
+                        }}
+                    />
                     <audio
                         className="mt-8 w-full"
                         controls

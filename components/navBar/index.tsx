@@ -1,19 +1,15 @@
 "use client";
-import React, {
-    useEffect,
-    useState,
-    useRef,
-    use,
-    Suspense,
-} from "react";
-import { NavigationEvents } from "../navigationEvents";
+import React from "react";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/reducHooks";
 
 interface Props {}
 const NavBar = ({}: Props) => {
     const router = useRouter();
-    const [routerChanging, setRouterChanging] =
-        useState<boolean>(false);
+    const dataIsLoading = useAppSelector(
+        (state) => state.utils.dataIsLoading
+    );
+
     return (
         <nav
             className="flex w-full h-30 p-4 justify-between items-center text-blue-600 font-bold border-b border-slate-300 hover:cursor-pointer"
@@ -21,14 +17,9 @@ const NavBar = ({}: Props) => {
                 router.push("/");
             }}
         >
-            <Suspense fallback={null}>
-                <NavigationEvents
-                    setRouterChanging={setRouterChanging}
-                />
-            </Suspense>
             <h1 className="text-3xl">Podcaster</h1>
-            {routerChanging && (
-                <span className="animate-ping h-4 w-4 rounded-full bg-sky-400 opacity-75"></span>
+            {dataIsLoading && (
+                <span className="animate-ping h-5 w-5 rounded-full bg-sky-400 opacity-75"></span>
             )}
         </nav>
     );

@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
 import { usePodcasts } from "../customHooks/usePersistence";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PodcastListCard from "@/components/podcastListCard";
 import { Podcast } from "@/models/Podcast";
+import { useAppDispatch } from "@/redux/reducHooks";
+import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
 
 const HomePage = () => {
     const {
@@ -12,8 +13,7 @@ const HomePage = () => {
         isError,
     } = usePodcasts();
     const [filter, setFilter] = useState("");
-    if (isLoading) return <p>Loading...</p>;
-    if (isError) return <p>Error loading podcasts</p>;
+    const dispatch = useAppDispatch();
 
     const filteredPodcasts = podcasts.filter(
         (podcast: any) =>
@@ -24,6 +24,16 @@ const HomePage = () => {
                 .toLowerCase()
                 .includes(filter.toLowerCase())
     );
+    useEffect(() => {
+        if (isLoading && !podcasts) {
+            dispatch(setDataIsLoading(true));
+        } else {
+            dispatch(setDataIsLoading(false));
+        }
+    }, [isLoading]);
+
+    if (isLoading) return <p>Loading...</p>;
+    if (isError) return <p>Error loading podcasts</p>;
 
     return (
         <div className="flex flex-col w-full justify-start items-center">

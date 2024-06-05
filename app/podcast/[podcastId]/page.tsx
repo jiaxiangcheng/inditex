@@ -6,8 +6,11 @@ import {
 } from "@/customHooks/usePersistence";
 import { Episode } from "@/models/Episode";
 import { Podcast } from "@/models/Podcast";
+import { setDataIsLoading } from "@/redux/features/utils/utilsSlice";
+import { useAppDispatch } from "@/redux/reducHooks";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
+import PodcastSkeleton from "../components/podcastSkeleton";
 
 interface Props {
     params: {
@@ -28,6 +31,7 @@ const PodcastPage = ({ params }: Props) => {
         isError,
     } = usePodcastById(podcastId);
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const [podcastData, setPodcastData] =
         React.useState<Podcast | null>(null);
 
@@ -42,11 +46,19 @@ const PodcastPage = ({ params }: Props) => {
         }
     }, [podcasts]);
 
+    useEffect(() => {
+        if (isLoading && !podcastDetails) {
+            dispatch(setDataIsLoading(true));
+        } else {
+            dispatch(setDataIsLoading(false));
+        }
+    }, [isLoading]);
+
     if (isLoading || podcastsLoading)
-        return <p>Loading...</p>;
+        return <PodcastSkeleton typeOfSkeleton="podcast" />;
     if (isError || podcastsError)
         return (
-            <p>{`Error loading podcasts with id: ${podcastId}`}</p>
+            <div className="flex w-full h-full justify-center items-center">{`Error loading podcasts with id: ${podcastId}`}</div>
         );
     return (
         <div className="flex w-full p-8">
@@ -94,11 +106,16 @@ const PodcastPage = ({ params }: Props) => {
                                         return null;
                                     // Convert episode.trackTimeMillis to MM:SS
                                     const duration =
-                                        new Date(
-                                            episode.trackTimeMillis
-                                        )
-                                            .toISOString()
-                                            .substr(14, 5);
+                                        episode.trackTimeMillis
+                                            ? new Date(
+                                                  episode.trackTimeMillis
+                                              )
+                                                  .toISOString()
+                                                  .substr(
+                                                      14,
+                                                      5
+                                                  )
+                                            : "N/A";
                                     return (
                                         <tr
                                             key={
